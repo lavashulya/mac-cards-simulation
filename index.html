@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Осознанные сновидения - MAC Карты</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-mint: #D1F2EB;
+            --color-cream: #FBF8F3;
+            --color-brown: #8B6F47;
+            --color-dark: #3D3D3D;
+            --color-accent: #7CB9A3;
+            --color-light-gray: #F5F5F5;
+            --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-mint) 100%);
+            color: var(--color-dark);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ============= HEADER ============= */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-brown);
+            letter-spacing: -0.5px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* ============= MAIN CONTAINER ============= */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* ============= SIDEBAR ============= */
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .module-item {
+            padding: 15px;
+            border-radius: 10px;
+            background: var(--color-light-gray);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-item:hover:not(.locked) {
+            background: var(--color-mint);
+            transform: translateX(4px);
+        }
+
+        .module-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .module-item.active {
+            background: var(--color-accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124, 185, 163, 0.3);
+        }
+
+        .module-icon {
+            font-size: 18px;
+        }
+
+        .reports-list {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-light-gray);
+        }
+
+        .report-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #FFF9F0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all var(--transition);
+        }
+
+        .report-item:hover {
+            background: #FFE8D6;
+            transform: translateX(2px);
+        }
+
+        /* ============= MAIN CONTENT ============= */
+        .main-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .module-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .module-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-brown);
+            margin-bottom: 10px;
+        }
+
+        .module-description {
+            font-size: 16px;
+            color: var(--color-dark);
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        /* ============= PROGRESS BAR ============= */
+        .progress-section {
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-mint));
+            transition: width var(--transition);
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: var(--color-brown);
+            font-weight: 600;
+        }
+
+        /* ============= EXERCISE ============= */
+        .exercise {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(209, 242, 235, 0.3) 0%, rgba(251, 248, 243, 0.5) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .exercise-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exercise-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--color-accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ============= QUESTION ============= */
+        .question-group {
+            margin-bottom: 30px;
+        }
+
+        .question-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--color-mint);
+            color: var(--color-brown);
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ============= CARD GALLERY ============= */
+.cards-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* ровно 4 столбца */
+    gap: 12px;
+    margin-bottom: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden; /* запрещаем горизонтальный скролл */
+    padding: 10px;
+    background: var(--color-light-gray);
+    border-radius: 10px;
+}
+
+        .card {
+             position: relative;
+    cursor: pointer;
+    transition: all var(--transition);
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card img {
+width: 100%;
+    height: 220px;      /* было 200 – делаем чуть выше */
+    object-fit: cover;
+    display: block;
+        }
+
+        .card-checkbox {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .card.selected {
+            border: 3px solid var(--color-accent);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-accent);
+        }
+
+        .card-label {
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            color: var(--color-brown);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ============= TEXTAREA ============= */
+        .insights-group {
+            margin-top: 15px;
+        }
+
+        .insights-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid var(--color-mint);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--color-dark);
+            resize: vertical;
+            transition: border-color var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(124, 185, 163, 0.1);
+        }
+
+        /* ============= BUTTONS ============= */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #6B9C88;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(124, 185, 163, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--color-light-gray);
+            color: var(--color-brown);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-mint);
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* ============= VIEWS ============= */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* ============= HOME VIEW ============= */
+        .home-view {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .home-hero {
+            margin-bottom: 50px;
+        }
+
+        .home-hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color-brown);
+            margin-bottom: 15px;
+        }
+
+        .home-hero p {
+            font-size: 18px;
+            color: var(--color-dark);
+            opacity: 0.7;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .home-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 16px 40px;
+            font-size: 16px;
+        }
+
+        /* ============= REPORT VIEW ============= */
+        .report-view {
+            background: white;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--color-light-gray);
+        }
+
+        .report-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-brown);
+            margin-bottom: 10px;
+        }
+
+        .report-subtitle {
+            font-size: 16px;
+            color: var(--color-dark);
+            opacity: 0.6;
+        }
+
+        .report-content {
+            margin-bottom: 40px;
+        }
+
+        .report-item-section {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .report-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 15px;
+        }
+
+        .report-answers {
+            margin-top: 20px;
+        }
+
+        .report-answer {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--color-light-gray);
+            border-radius: 8px;
+        }
+
+        .report-answer-label {
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .report-answer-text {
+            color: var(--color-dark);
+            line-height: 1.6;
+        }
+
+        .report-card-preview {
+            width: 100px;
+            height: 150px;
+            margin: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-card-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ============= MODAL ============= */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 900px;  /* было 600, увеличиваем */
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-dark);
+        }
+
+        /* ============= SCROLLBAR ============= */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-light-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B9C88;
+        }
+
+        /* ============= PRINT ============= */
+        @media print {
+            body {
+                background: white;
+            }
+            .sidebar, header, .button-group {
+                display: none;
+            }
+            .main-content {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🌿 Осознанные сновидения</div>
+        <div class="header-buttons">
+            <button class="btn-secondary btn-small" onclick="app.goHome()">← Домой</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3>📚 Модули</h3>
+            <div class="modules-grid" id="modulesGrid"></div>
+
+            <div class="reports-list">
+                <h3>📋 Отчёты</h3>
+                <div id="reportsList"></div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HOME VIEW -->
+            <div class="view active home-view" id="homeView">
+                <div class="home-hero">
+                    <h1>Добро пожаловать!</h1>
+                    <p>Начните путь самопознания через метафорические карты "Осознанные сновидения". Каждый модуль поможет вам глубже понять себя, свои цели и мотивацию.</p>
+                    <div class="home-buttons">
+                        <button class="btn-primary btn-large" onclick="app.startModule(0)">Начать первый модуль →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE VIEW -->
+            <div class="view module-view" id="moduleView">
+                <div class="module-header">
+                    <h1 class="module-title" id="moduleTitle"></h1>
+                    <p class="module-description" id="moduleDescription"></p>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText"></div>
+                </div>
+
+                <form id="moduleForm"></form>
+
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="app.previousModule()">← Назад</button>
+                    <button class="btn-primary" onclick="app.nextModule()">Далее →</button>
+                </div>
+            </div>
+
+            <!-- REPORT VIEW -->
+            <div class="view report-view" id="reportView">
+                <div id="reportContent"></div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="app.downloadReport()">📥 Скачать PDF</button>
+                    <button class="btn-secondary" onclick="app.goHome()">← Вернуться</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CARD SELECTOR MODAL -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="app.closeCardModal()">✕</span>
+            <h2 style="margin-bottom: 20px; color: var(--color-brown);">Выберите карту</h2>
+            <div class="cards-gallery" id="cardGallery"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============= КАРТЫ ИЗ РЕАЛЬНЫХ ФАЙЛОВ =============
+        // Все ссылки S3 получены из загруженных файлов "Osoznannye-snovedeniia-*.jpg"
+        // КОД ДЛЯ ЗАГРУЗКИ КАРТ: строки 600-625
+       const REAL_CARDS = [
+  { id: 1,  name: "Карта 1",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/9275c7c1-b567-4d3b-a88b-0bf34e7b747f" },
+  { id: 2,  name: "Карта 2",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/79eaf23b-0a6b-4165-9d81-cde15d429482" },
+  { id: 3,  name: "Карта 3",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/ac03aab6-f1ac-48de-a871-10f1e5bf7739" },
+  { id: 4,  name: "Карта 4",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/f29a62d2-7ed6-4e34-974e-1a8642e85602" },
+  { id: 5,  name: "Карта 5",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/4233196a-0ea8-45d0-a50d-ef9447651607" },
+  { id: 6,  name: "Карта 6",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/257b2543-029a-4c33-80a2-ad55ef188888" },
+  { id: 7,  name: "Карта 7",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/0e80a627-4c54-4fef-a90c-70e780ba23d7" },
+  { id: 8,  name: "Карта 8",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/0e288fd0-9504-4e03-84a6-0e3999db4d8d" },
+  { id: 9,  name: "Карта 9",  img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/d91dd6b1-d3c6-4dcd-8c85-190dcd5eeaea" },
+  { id: 10, name: "Карта 10", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/baa410ca-c6db-4f6b-8ecf-dffee896f0dc" },
+  { id: 11, name: "Карта 11", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/7957b6fd-383e-44bd-b17b-28d15f3d8dbb" },
+  { id: 12, name: "Карта 12", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/801e8da3-7ef0-4ff8-8d5a-93d6485511d9" },
+  { id: 13, name: "Карта 13", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/c68d5ee7-e407-4d2b-8f2d-01f3ffcc2cc5" },
+  { id: 14, name: "Карта 14", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/0ab933b9-c3b6-46df-af9a-7e0ab8337755" },
+  { id: 15, name: "Карта 15", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/3dc9a68d-b5b6-4bf8-84c0-c93ec215855b" },
+  { id: 16, name: "Карта 16", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/79eaf23b-0a6b-4165-9d81-cde15d429482" },
+  { id: 17, name: "Карта 17", img: "https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/4233196a-0ea8-45d0-a50d-ef9447651607" }
+];
+
+
+        // ============= ДАННЫЕ МОДУЛЕЙ =============
+        const MODULES = [
+            {
+                id: 1,
+                title: "Кто я?",
+                description: "Исследуем восприятие себя с разных углов",
+                exercises: [
+                    {
+                        title: "Восприятие себя",
+                        description: "Выберите карту на каждый вопрос, отражающую ваше видение",
+                        questions: [
+		{ id: "q1", text: "Как я себя вижу?", cardRequired: true },
+                { id: "q2", text: "Как я хочу себя видеть?", cardRequired: true },
+                { id: "q3", text: "Какова я на самом деле?", cardRequired: true },
+                { id: "q4", text: "Как меня видят другие?", cardRequired: true },
+                { id: "q5", text: "Каким(ой) они хотят меня видеть?", cardRequired: true },
+                { id: "q6", text: "Каким(ой) я могу и хочу быть настоящим(ей)?", cardRequired: true }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Определение успеха",
+                description: "Разберёмся, что такое успех для вас",
+                exercises: [
+                    {
+                        title: "Анализ успеха",
+                        description: "Определите успех через примеры",
+                        questions: [
+                            { id: "q7", text: "Выберите 5 успешных людей и ответьте: Какого успеха они достигли?" },
+                            { id: "q8", text: "Что в них общего?" },
+                            { id: "q9", text: "В чём между ними разница?" },
+                            { id: "q10", text: "Дайте своё определение успеха. Хотели ли вы достичь именно такого?" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Собственный успех",
+                description: "Спланируем ваши личные цели",
+                exercises: [
+                    {
+                        title: "Планирование",
+                        description: "Определите уровни ваших целей",
+                        questions: [
+                            { id: "q11", text: "Что должно происходить через 5 лет, чтобы я считал(а) себя успешным(ой)?", cardRequired: true },
+                            { id: "q12", text: "Что должно происходить через год?", cardRequired: true },
+                            { id: "q13", text: "Какого успеха в течение месяца?", cardRequired: true },
+                            { id: "q14", text: "Какой успешный шаг нужно осуществить на неделе?", cardRequired: true }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Мотивация",
+                description: "Найдём ваши движущие силы",
+                exercises: [
+                    {
+                        title: "Мотивационный анализ",
+                        description: "Исследуем, что вас вдохновляет",
+                        questions: [
+                            { id: "q15", text: "Что вас вдохновляет?", cardRequired: true },
+                            { id: "q16", text: "Что вас парализует?", cardRequired: true },
+                            { id: "q17", text: "Что нужно изменить?" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Трансформация",
+                description: "Видение вашего будущего",
+                exercises: [
+                    {
+                        title: "Видение будущего",
+                        description: "Создайте образ идеального себя",
+                        questions: [
+                            { id: "q18", text: "Кем я хочу стать?", cardRequired: true },
+                            { id: "q19", text: "Какие качества мне развивать?", cardRequired: true },
+                            { id: "q20", text: "Первый шаг прямо сейчас?" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // ============= APP STATE =============
+        const app = {
+            currentModuleId: null,
+            currentExerciseId: null,
+            responses: {},
+            cards: REAL_CARDS,
+            currentCardInputId: null,
+
+            // ============= INIT =============
+            init() {
+                this.loadResponses();
+                this.renderModules();
+                this.renderReports();
+                console.log("✅ Приложение инициализировано с", this.cards.length, "картами из S3");
+            },
+
+            // ============= MODULES =============
+            renderModules() {
+                const grid = document.getElementById('modulesGrid');
+                grid.innerHTML = MODULES.map((m, i) => `
+                    <div class="module-item ${i > 0 && !this.isModuleUnlocked(i) ? 'locked' : ''} ${this.currentModuleId === m.id ? 'active' : ''}"
+                         onclick="app.startModule(${i})">
+                        <span>Модуль ${m.id}</span>
+                        <span class="module-icon">${i > 0 && !this.isModuleUnlocked(i) ? '🔒' : '✓'}</span>
+                    </div>
+                `).join('');
+            },
+
+            isModuleUnlocked(index) {
+                if (index === 0) return true;
+                const prevModule = MODULES[index - 1];
+                return this.isModuleCompleted(prevModule.id);
+            },
+
+            isModuleCompleted(moduleId) {
+                const module = MODULES.find(m => m.id === moduleId);
+                if (!module) return false;
+                
+                return module.exercises.every(ex => 
+                    ex.questions.every(q => this.responses[q.id])
+                );
+            },
+
+            startModule(moduleIndex) {
+                const module = MODULES[moduleIndex];
+                if (moduleIndex > 0 && !this.isModuleUnlocked(moduleIndex)) {
+                    alert('Сначала завершите предыдущий модуль');
+                    return;
+                }
+
+                this.currentModuleId = module.id;
+                this.currentExerciseId = 0;
+                this.renderModule();
+                this.showView('moduleView');
+                this.renderModules();
+            },
+
+            renderModule() {
+                const module = MODULES.find(m => m.id === this.currentModuleId);
+                document.getElementById('moduleTitle').textContent = module.title;
+                document.getElementById('moduleDescription').textContent = module.description;
+
+                const form = document.getElementById('moduleForm');
+                form.innerHTML = module.exercises.map((ex, exIdx) => `
+                    <div class="exercise">
+                        <div class="exercise-title">
+                            <span class="exercise-number">${exIdx + 1}</span>
+                            ${ex.title}
+                        </div>
+                        <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
+                        ${ex.questions.map((q, qIdx) => `
+                            <div class="question-group">
+                                <label class="question-label">
+                                    <span class="question-number">${qIdx + 1}</span>
+                                    ${q.text}
+                                </label>
+                                ${q.cardRequired ? `
+                                    <div style="margin-bottom: 15px;">
+                                        <button type="button" class="btn-secondary" onclick="app.openCardModal('${q.id}')">
+                                            📂 Выбрать карту
+                                        </button>
+                                        <div id="selected-${q.id}" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                                    </div>
+                                ` : ''}
+                                <div class="insights-group">
+                                    <label class="insights-label">Ваши инсайты:</label>
+                                    <textarea id="text-${q.id}" placeholder="Напишите ваши мысли, впечатления, размышления...">${this.responses[q.id]?.text || ''}</textarea>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+
+                // Восстановить выбор карт
+                module.exercises.forEach(ex => {
+                    ex.questions.forEach(q => {
+                        const selected = this.responses[q.id]?.cards || [];
+                        const container = document.getElementById(`selected-${q.id}`);
+                        if (container) {
+                            container.innerHTML = selected.map(cardId => {
+                                const card = this.cards.find(c => c.id === cardId);
+                                return `
+                                    <div class="report-card-preview" style="position: relative;">
+                                        <img src="${card.img}" alt="${card.name}">
+                                        <button type="button" class="btn-small" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;" onclick="app.removeCard('${q.id}', ${cardId})">✕</button>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                    });
+                });
+
+                this.updateProgress();
+            },
+
+            updateProgress() {
+                const module = MODULES.find(m => m.id === this.currentModuleId);
+                const totalQuestions = module.exercises.reduce((sum, ex) => sum + ex.questions.length, 0);
+                const answeredQuestions = module.exercises.reduce((sum, ex) => {
+                    return sum + ex.questions.filter(q => this.responses[q.id]).length;
+                }, 0);
+
+                const percentage = Math.round((answeredQuestions / totalQuestions) * 100);
+                document.getElementById('progressFill').style.width = percentage + '%';
+                document.getElementById('progressText').textContent = `Прогресс: ${answeredQuestions}/${totalQuestions} вопросов (${percentage}%)`;
+            },
+
+            nextModule() {
+                this.saveResponses();
+                const module = MODULES.find(m => m.id === this.currentModuleId);
+                
+                const allAnswered = module.exercises.every(ex => 
+                    ex.questions.every(q => {
+                        const response = this.responses[q.id];
+                        return response && (response.text || response.cards?.length > 0);
+                    })
+                );
+
+                if (!allAnswered) {
+                    alert('Пожалуйста, ответьте на все вопросы перед переходом');
+                    return;
+                }
+
+                this.createReport(this.currentModuleId);
+
+                const currentIndex = MODULES.findIndex(m => m.id === this.currentModuleId);
+                if (currentIndex < MODULES.length - 1) {
+                    this.startModule(currentIndex + 1);
+                } else {
+                    alert('🎉 Поздравляем! Вы завершили все модули!');
+                    this.goHome();
+                }
+            },
+
+            previousModule() {
+                this.saveResponses();
+                const currentIndex = MODULES.findIndex(m => m.id === this.currentModuleId);
+                if (currentIndex > 0) {
+                    this.startModule(currentIndex - 1);
+                }
+            },
+
+            // ============= RESPONSES =============
+            saveResponses() {
+                const module = MODULES.find(m => m.id === this.currentModuleId);
+                module.exercises.forEach(ex => {
+                    ex.questions.forEach(q => {
+                        const textArea = document.getElementById(`text-${q.id}`);
+                        if (textArea) {
+                            this.responses[q.id] = {
+                                text: textArea.value,
+                                cards: this.responses[q.id]?.cards || []
+                            };
+                        }
+                    });
+                });
+                localStorage.setItem('responses', JSON.stringify(this.responses));
+            },
+
+            loadResponses() {
+                const saved = localStorage.getItem('responses');
+                this.responses = saved ? JSON.parse(saved) : {};
+            },
+
+            // ============= CARD MODAL =============
+            openCardModal(questionId) {
+                this.currentCardInputId = questionId;
+                const gallery = document.getElementById('cardGallery');
+                gallery.innerHTML = this.cards.map(card => `
+                    <label style="cursor: pointer;">
+                        <input type="checkbox" ${this.responses[questionId]?.cards?.includes(card.id) ? 'checked' : ''} 
+                               onchange="app.toggleCard(${card.id}, '${questionId}')">
+                        <div class="card ${this.responses[questionId]?.cards?.includes(card.id) ? 'selected' : ''}">
+                            <img src="${card.img}" alt="${card.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
+                            <div class="card-label">${card.name}</div>
+                        </div>
+                    </label>
+                `).join('');
+                document.getElementById('cardModal').classList.add('active');
+            },
+
+            toggleCard(cardId, questionId) {
+                if (!this.responses[questionId]) {
+                    this.responses[questionId] = { text: '', cards: [] };
+                }
+                const cards = this.responses[questionId].cards;
+                const index = cards.indexOf(cardId);
+                if (index > -1) {
+                    cards.splice(index, 1);
+                } else {
+                    cards.push(cardId);
+                }
+                this.saveResponses();
+                this.renderModule();
+            },
+
+            removeCard(questionId, cardId) {
+                if (this.responses[questionId]) {
+                    this.responses[questionId].cards = this.responses[questionId].cards.filter(c => c !== cardId);
+                    this.saveResponses();
+                    this.renderModule();
+                }
+            },
+
+            closeCardModal() {
+                document.getElementById('cardModal').classList.remove('active');
+            },
+
+            // ============= REPORTS =============
+            createReport(moduleId) {
+                const module = MODULES.find(m => m.id === moduleId);
+                const reportId = 'report_' + Date.now();
+                const report = {
+                    id: reportId,
+                    moduleId: moduleId,
+                    moduleName: module.title,
+                    date: new Date().toLocaleString('ru-RU'),
+                    exercises: module.exercises.map(ex => ({
+                        title: ex.title,
+                        questions: ex.questions.map(q => ({
+                            id: q.id,
+                            text: q.text,
+                            response: this.responses[q.id] || {}
+                        }))
+                    }))
+                };
+
+                let reports = JSON.parse(localStorage.getItem('reports') || '[]');
+                reports.push(report);
+                localStorage.setItem('reports', JSON.stringify(reports));
+                this.renderReports();
+            },
+
+            renderReports() {
+                const reportsList = document.getElementById('reportsList');
+                const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+                reportsList.innerHTML = reports.map(r => `
+                    <div class="report-item" onclick="app.showReport('${r.id}')">
+                        ${r.moduleName} - ${r.date}
+                    </div>
+                `).join('');
+            },
+
+            showReport(reportId) {
+                const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+                const report = reports.find(r => r.id === reportId);
+                if (!report) return;
+
+                const content = document.getElementById('reportContent');
+                content.innerHTML = `
+                    <div class="report-header">
+                        <h1 class="report-title">${report.moduleName}</h1>
+                        <p class="report-subtitle">${report.date}</p>
+                    </div>
+                    <div class="report-content">
+                        ${report.exercises.map((ex, exIdx) => `
+                            <div class="report-item-section">
+                                <h3 class="report-item-title">${exIdx + 1}. ${ex.title}</h3>
+                                ${ex.questions.map(q => `
+                                    <div class="report-answer">
+                                        <div class="report-answer-label">❓ ${q.text}</div>
+                                        <div class="report-answer-text">
+                                            ${q.response.cards?.map(cardId => {
+                                                const card = this.cards.find(c => c.id === cardId);
+                                                return `<div class="report-card-preview"><img src="${card.img}" alt="${card.name}"></div>`;
+                                            }).join('') || ''}
+                                            <div style="margin-top: 10px;">${q.response.text || 'Нет ответа'}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                this.showView('reportView');
+            },
+
+            downloadReport() {
+                const element = document.getElementById('reportContent');
+                const opt = {
+                    margin: 10,
+                    filename: 'report_' + new Date().toISOString().split('T')[0] + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+                };
+                html2pdf().set(opt).from(element).save();
+            },
+
+            // ============= NAVIGATION =============
+            showView(viewName) {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById(viewName).classList.add('active');
+            },
+
+            goHome() {
+                this.currentModuleId = null;
+                this.showView('homeView');
+                this.renderModules();
+            }
+        };
+
+        // ============= INIT =============
+        app.init();
+    </script>
+</body>
+</html>
