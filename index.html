@@ -1024,20 +1024,44 @@ let cards = cards_OS;
 },
 
 
-            toggleCard(cardId, questionId) {
-                if (!this.responses[questionId]) {
-                    this.responses[questionId] = { text: '', cards: [] };
-                }
-                const cards = this.responses[questionId].cards;
-                const index = cards.indexOf(cardId);
-                if (index > -1) {
-                    cards.splice(index, 1);
-                } else {
-                    cards.push(cardId);
-                }
-                this.saveResponses();
-                this.renderModule();
-            },
+selectCardInModal(cardId) {
+  this.currentSelectedCardId = cardId;
+
+  // Обновляем визуальное выделение
+  const gallery = document.getElementById('cardGallery');
+  if (!gallery) return;
+  Array.from(gallery.getElementsByClassName('card')).forEach(cardEl => {
+    cardEl.classList.remove('selected');
+  });
+  // Находим карточку по data-id (если нужно) – проще перерисовать:
+  gallery.innerHTML = this.cards.map(card => `
+    <div class="card ${this.currentSelectedCardId === card.id ? 'selected' : ''}"
+         onclick="app.selectCardInModal(${card.id})">
+      <img src="${card.img}" alt="${card.name}"
+           onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
+      <div class="card-label">${card.name}</div>
+    </div>
+  `).join('');
+},
+
+	confirmCardSelection() {
+  		const questionId = this.currentCardInputId;
+  		if (!questionId) {
+    		this.closeCardModal();
+    		return;
+  		}
+
+  		if (!this.responses[questionId]) {
+    		this.responses[questionId] = { text: '', cards: [] };
+  		}
+
+  		// Сохраняем ровно один cardId (если выбран)
+  		this.responses[questionId].cards = this.currentSelectedCardId ? [this.currentSelectedCardId] : [];
+  		this.saveResponses();
+  		this.renderModule();
+  		this.closeCardModal();
+		},
+
 
             removeCard(questionId, cardId) {
                 if (this.responses[questionId]) {
@@ -1047,9 +1071,12 @@ let cards = cards_OS;
                 }
             },
 
-            closeCardModal() {
-                document.getElementById('cardModal').classList.remove('active');
-            },
+		closeCardModal() {
+  			this.currentCardInputId = null;
+  			this.currentSelectedCardId = null;
+  			document.getElementById('cardModal').classList.remove('active');
+		},
+
 
             // ============= REPORTS =============
             createReport(moduleId) {
@@ -1151,6 +1178,7 @@ let cards = cards_OS;
     </script>
 </body>
 </html>
+
 
 
 
