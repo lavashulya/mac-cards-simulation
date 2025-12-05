@@ -624,10 +624,16 @@ width: 100%;
 </head>
 <body>
     <header>
-        <div class="logo">🌿 Осознанные сновидения</div>
-        <div class="header-buttons">
-            <button class="btn-secondary btn-small" onclick="app.goHome()">← Домой</button>
-        </div>
+		<button class="logo"
+          type="button"
+          onclick="app.goHome()"
+          style="background:none; border:none; padding:0; cursor:pointer; text-align:left;">
+    Моя реализация
+  		</button>
+
+  		<div class="header-buttons">
+    	<button class="btn-secondary btn-small" onclick="app.goHome()">← Домой</button>
+  		</div>
     </header>
 
     <div class="container">
@@ -1224,6 +1230,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
