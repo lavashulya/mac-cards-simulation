@@ -555,25 +555,38 @@ width: 100%;
             justify-content: center;
         }
 
-.modal-content {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    max-width: 900px;  /* было 600, увеличиваем */
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+.modal-content { 
+	background: white; 
+	border-radius: 16px; 
+	padding: 30px; 
+	max-width: 900px; /* было 600, увеличиваем */ 
+	width: 100%; max-height: 90vh; 
+	overflow-y: auto; 
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); 
+	position: relative; 
+	padding-top: 50px; 
+}
+		
+.modal-close { 
+	position: absolute; 
+	top: 16px; 
+	right: 20px; 
+	font-size: 22px; 
+	cursor: pointer; 
+	color: var(--color-dark); 
+	line-height: 1; 
+}
+		
+.modal-footer { 
+	margin-top: 20px; 
+	display: flex; 
+	justify-content: flex-end; 
+}
+		
+.modal-footer .btn-primary { 
+	max-width: 200px; 
 }
 
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--color-dark);
-        }
 
         /* ============= SCROLLBAR ============= */
         ::-webkit-scrollbar {
@@ -1127,6 +1140,7 @@ let cards = cards_OS;
     </script>
 </body>
 </html>
+
 
 
 
