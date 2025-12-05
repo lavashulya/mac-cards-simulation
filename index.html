@@ -689,13 +689,17 @@ width: 100%;
     </div>
 
     <!-- CARD SELECTOR MODAL -->
-    <div class="modal" id="cardModal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="app.closeCardModal()">✕</span>
-            <h2 style="margin-bottom: 20px; color: var(--color-brown);">Выберите карту</h2>
-            <div class="cards-gallery" id="cardGallery"></div>
-        </div>
+<div id="cardModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="app.closeCardModal()">✕</span>
+    <h2 style="margin-bottom: 15px;">Выберите карту</h2>
+    <div id="cardGallery" class="cards-gallery"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn-primary" onclick="app.confirmCardSelection()">Выбрать</button>
     </div>
+  </div>
+</div>
+
 
     <script>
         // ============= КАРТЫ ИЗ РЕАЛЬНЫХ ФАЙЛОВ =============
@@ -1140,6 +1144,7 @@ let cards = cards_OS;
     </script>
 </body>
 </html>
+
 
 
 
