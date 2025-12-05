@@ -1079,29 +1079,42 @@ selectCardInModal(cardId) {
 
 
             // ============= REPORTS =============
-            createReport(moduleId) {
-                const module = MODULES.find(m => m.id === moduleId);
-                const reportId = 'report_' + Date.now();
-                const report = {
-                    id: reportId,
-                    moduleId: moduleId,
-                    moduleName: module.title,
-                    date: new Date().toLocaleString('ru-RU'),
-                    exercises: module.exercises.map(ex => ({
-                        title: ex.title,
-                        questions: ex.questions.map(q => ({
-                            id: q.id,
-                            text: q.text,
-                            response: this.responses[q.id] || {}
-                        }))
-                    }))
-                };
+createReport(moduleId) {
+  const module = MODULES.find(m => m.id === moduleId);
+  const reportId = 'report_' + Date.now();
 
-                let reports = JSON.parse(localStorage.getItem('reports') || '[]');
-                reports.push(report);
-                localStorage.setItem('reports', JSON.stringify(reports));
-                this.renderReports();
-            },
+  // Новый формат саммари по модулю
+  const summary = module.exercises.flatMap(ex =>
+    ex.questions.map(q => ({
+      questionId: q.id,
+      questionText: q.text,
+      cardId: (this.responses[q.id]?.cards || [])[0] || null,
+      answerText: this.responses[q.id]?.text || ''
+    }))
+  );
+
+  const report = {
+    id: reportId,
+    moduleId: moduleId,
+    moduleName: module.title,
+    date: new Date().toLocaleString('ru-RU'),
+    summary, // новый массив [{ questionText, cardId, answerText }]
+    exercises: module.exercises.map(ex => ({
+      title: ex.title,
+      questions: ex.questions.map(q => ({
+        id: q.id,
+        text: q.text,
+        response: this.responses[q.id] || {}
+      }))
+    }))
+  };
+
+  let reports = JSON.parse(localStorage.getItem('reports') || '[]');
+  reports.push(report);
+  localStorage.setItem('reports', JSON.stringify(reports));
+  this.renderReports();
+},
+
 
             renderReports() {
                 const reportsList = document.getElementById('reportsList');
@@ -1113,40 +1126,73 @@ selectCardInModal(cardId) {
                 `).join('');
             },
 
-            showReport(reportId) {
-                const reports = JSON.parse(localStorage.getItem('reports') || '[]');
-                const report = reports.find(r => r.id === reportId);
-                if (!report) return;
+showReport(reportId) {
+  const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+  const report = reports.find(r => r.id === reportId);
+  if (!report) return;
+  const content = document.getElementById('reportContent');
 
-                const content = document.getElementById('reportContent');
-                content.innerHTML = `
-                    <div class="report-header">
-                        <h1 class="report-title">${report.moduleName}</h1>
-                        <p class="report-subtitle">${report.date}</p>
-                    </div>
-                    <div class="report-content">
-                        ${report.exercises.map((ex, exIdx) => `
-                            <div class="report-item-section">
-                                <h3 class="report-item-title">${exIdx + 1}. ${ex.title}</h3>
-                                ${ex.questions.map(q => `
-                                    <div class="report-answer">
-                                        <div class="report-answer-label">❓ ${q.text}</div>
-                                        <div class="report-answer-text">
-                                            ${q.response.cards?.map(cardId => {
-                                                const card = this.cards.find(c => c.id === cardId);
-                                                return `<div class="report-card-preview"><img src="${card.img}" alt="${card.name}"></div>`;
-                                            }).join('') || ''}
-                                            <div style="margin-top: 10px;">${q.response.text || 'Нет ответа'}</div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+  // Если есть summary – показываем модульный саммари
+  if (report.summary && Array.isArray(report.summary)) {
+    content.innerHTML = `
+      <div class="report-header">
+        <h1 class="report-title">${report.moduleName}</h1>
+        <p class="report-subtitle">${report.date}</p>
+      </div>
+      <div class="report-content">
+        ${report.summary.map(item => {
+          const card = item.cardId
+            ? this.cards.find(c => c.id === item.cardId)
+            : null;
+          return `
+            <div class="report-answer">
+              <div class="report-answer-label">❓ ${item.questionText}</div>
+              <div class="report-answer-text" style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+                ${card ? `
+                  <div class="report-card-preview">
+                    <img src="${card.img}" alt="${card.name}">
+                  </div>` : ''}
+                <div style="flex:1; min-width:200px; margin-top: 4px;">
+                  ${item.answerText || 'Нет ответа'}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    // Старый формат отчёта для совместимости
+    content.innerHTML = `
+      <div class="report-header">
+        <h1 class="report-title">${report.moduleName}</h1>
+        <p class="report-subtitle">${report.date}</p>
+      </div>
+      <div class="report-content">
+        ${report.exercises.map((ex, exIdx) => `
+          <div class="report-item-section">
+            <h3 class="report-item-title">${exIdx + 1}. ${ex.title}</h3>
+            ${ex.questions.map(q => `
+              <div class="report-answer">
+                <div class="report-answer-label">❓ ${q.text}</div>
+                <div class="report-answer-text">
+                  ${q.response.cards?.map(cardId => {
+                    const card = this.cards.find(c => c.id === cardId);
+                    return `<div class="report-card-preview"><img src="${card.img}" alt="${card.name}"></div>`;
+                  }).join('') || ''}
+                  <div style="margin-top: 10px;">${q.response.text || 'Нет ответа'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
 
-                this.showView('reportView');
-            },
+  this.showView('reportView');
+},
+
 
             downloadReport() {
                 const element = document.getElementById('reportContent');
@@ -1178,6 +1224,7 @@ selectCardInModal(cardId) {
     </script>
 </body>
 </html>
+
 
 
 
