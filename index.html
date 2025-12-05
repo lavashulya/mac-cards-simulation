@@ -823,6 +823,8 @@ let cards = cards_OS;
             responses: {},
             cards: cards_OS,
             currentCardInputId: null,
+			currentSelectedCardId: null, // временный выбор в модалке
+		// ============= INIT =============
 
             // ============= INIT =============
             init() {
@@ -1001,21 +1003,26 @@ let cards = cards_OS;
             },
 
             // ============= CARD MODAL =============
-            openCardModal(questionId) {
-                this.currentCardInputId = questionId;
-                const gallery = document.getElementById('cardGallery');
-                gallery.innerHTML = this.cards.map(card => `
-                    <label style="cursor: pointer;">
-                        <input type="checkbox" ${this.responses[questionId]?.cards?.includes(card.id) ? 'checked' : ''} 
-                               onchange="app.toggleCard(${card.id}, '${questionId}')">
-                        <div class="card ${this.responses[questionId]?.cards?.includes(card.id) ? 'selected' : ''}">
-                            <img src="${card.img}" alt="${card.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
-                            <div class="card-label">${card.name}</div>
-                        </div>
-                    </label>
-                `).join('');
-                document.getElementById('cardModal').classList.add('active');
-            },
+	openCardModal(questionId) {
+  		this.currentCardInputId = questionId;
+
+ 		 // Текущее сохранённое значение для вопроса
+  		const currentCardId = this.responses[questionId]?.cards?.[0] || null;
+  		this.currentSelectedCardId = currentCardId;
+
+  		const gallery = document.getElementById('cardGallery');
+  		gallery.innerHTML = this.cards.map(card => `
+    		<div class="card ${currentCardId === card.id ? 'selected' : ''}"
+        	 onclick="app.selectCardInModal(${card.id})">
+     		 <img src="${card.img}" alt="${card.name}"
+           onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
+      		<div class="card-label">${card.name}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('cardModal').classList.add('active');
+},
+
 
             toggleCard(cardId, questionId) {
                 if (!this.responses[questionId]) {
@@ -1144,6 +1151,7 @@ let cards = cards_OS;
     </script>
 </body>
 </html>
+
 
 
 
