@@ -1175,38 +1175,6 @@ confirmCardSelection() {
     return;
   }
 
-  console.log('CONFIRM CLICK', {
-    questionId,
-    currentCardIndex: this.currentCardIndex,
-    currentSelectedCardId: this.currentSelectedCardId
-  });
-
-  if (!this.responses[questionId]) {
-    this.responses[questionId] = { text: '', cards: [] };
-  }
-
-  // сохраняем выбранную карту
-  this.responses[questionId].cards = this.currentSelectedCardId
-    ? [this.currentSelectedCardId]
-    : [];
-
-  this.saveResponses();
-  this.renderModule();
-  this.closeCardModal();
-
-  // найти блок вопроса и прокрутить к нему
-  const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
-  if (questionBlock) {
-    questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    questionBlock.classList.add('highlight-question');
-    setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
-
-    const textarea = questionBlock.querySelector('textarea');
-    if (textarea) textarea.focus();
-  }
-},
-
-
   if (!this.responses[questionId]) {
     this.responses[questionId] = { text: '', cards: [] };
   }
@@ -1379,8 +1347,6 @@ showReport(reportId) {
     </script>
 </body>
 </html>
-
-
 
 
 
