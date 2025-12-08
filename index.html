@@ -1057,59 +1057,117 @@ let cards = cards_OS;
 
             // ============= CARD MODAL =============
 // ============= CARD MODAL =============
-openCardModal(questionId) {
+// индекс текущей карты в модалке
+currentCardIndex: 0,
+
+openCardModal(questionId, startIndex = 0) {
   this.currentCardInputId = questionId;
+  this.currentCardIndex = startIndex;
 
-  const currentCardId = this.responses[questionId]?.cards?.[0] || null;
-  this.currentSelectedCardId = currentCardId;
+  // если по этому вопросу уже есть сохранённая карта — открыть именно её
+  const savedCardId = this.responses[questionId]?.cards?.[0] || null;
+  if (savedCardId) {
+    const idx = this.cards.findIndex(c => c.id === savedCardId);
+    if (idx !== -1) {
+      this.currentCardIndex = idx;
+    }
+  }
 
+  this.renderCardGallery();
+  this.renderCardPreview();
+
+  document.getElementById('cardModal').classList.add('active');
+},
+
+renderCardGallery() {
   const gallery = document.getElementById('cardGallery');
-  gallery.innerHTML = this.cards.map(card => `
-    <div class="card" onclick="app.selectCardInModal(${card.id})">
+  if (!gallery) return;
+
+  gallery.innerHTML = this.cards.map((card, index) => `
+    <div class="card ${index === this.currentCardIndex ? 'selected' : ''}"
+         onclick="app.selectCardInModal(${index})">
       <img src="${card.img}"
            alt="${card.name}"
            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
       <div class="card-label">${card.name}</div>
     </div>
   `).join('');
-
-  if (currentCardId) {
-    this.selectCardInModal(currentCardId, false);
-  } else {
-    const preview = document.getElementById('cardPreview');
-    if (preview) preview.style.display = 'none';
-  }
-
-  document.getElementById('cardModal').classList.add('active');
 },
 
-selectCardInModal(cardId, scrollToCard = true) {
-  this.currentSelectedCardId = cardId;
+renderCardPreview() {
+  const card = this.cards[this.currentCardIndex];
+  const preview = document.getElementById('cardPreview');
+  const img = document.getElementById('cardPreviewImg');
+  const title = document.getElementById('cardPreviewTitle');
+
+  if (!preview || !img || !title || !card) return;
+
+  preview.style.display = 'block';
+  img.src = card.img;
+  img.alt = card.name;
+  title.textContent = card.name;
+
+  // подсветка выбранной мини-карты
+  const gallery = document.getElementById('cardGallery');
+  if (gallery) {
+    const cardEls = Array.from(gallery.getElementsByClassName('card'));
+    cardEls.forEach((el, index) => {
+      el.classList.toggle('selected', index === this.currentCardIndex);
+    });
+  }
+},
+
+selectCardInModal(index) {
+  this.currentCardIndex = index;
+  this.renderCardPreview();
 
   const gallery = document.getElementById('cardGallery');
   if (!gallery) return;
-
   const cardEls = Array.from(gallery.getElementsByClassName('card'));
-  cardEls.forEach(el => el.classList.remove('selected'));
-
-  const selectedEl = cardEls[cardId - 1];
+  const selectedEl = cardEls[index];
   if (selectedEl) {
-    selectedEl.classList.add('selected');
-    if (scrollToCard) {
-      selectedEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    }
+    selectedEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+},
+
+showNextCard() {
+  if (!this.cards.length) return;
+  this.currentCardIndex = (this.currentCardIndex + 1) % this.cards.length;
+  this.renderCardPreview();
+},
+
+showPrevCard() {
+  if (!this.cards.length) return;
+  this.currentCardIndex =
+    (this.currentCardIndex - 1 + this.cards.length) % this.cards.length;
+  this.renderCardPreview();
+},
+
+confirmCardSelection() {
+  const questionId = this.currentCardInputId;
+  const card = this.cards[this.currentCardIndex];
+  if (!questionId || !card) {
+    this.closeCardModal();
+    return;
   }
 
-  const card = this.cards.find(c => c.id === cardId);
-  const preview = document.getElementById('cardPreview');
-  const previewImg = document.getElementById('cardPreviewImg');
-  const previewTitle = document.getElementById('cardPreviewTitle');
+  // сохранить карту в ответах
+  if (!this.responses[questionId]) {
+    this.responses[questionId] = {};
+  }
+  this.responses[questionId].cards = [card.id];
+  this.saveState();
 
-  if (card && preview && previewImg && previewTitle) {
-    preview.style.display = 'block';
-    previewImg.src = card.img;
-    previewImg.alt = card.name;
-    previewTitle.textContent = card.name;
+  this.closeCardModal();
+
+  // найти блок вопроса и прокрутить к нему
+  const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
+  if (questionBlock) {
+    questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    questionBlock.classList.add('highlight-question');
+    setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
+    const textarea = questionBlock.querySelector('textarea');
+    if (textarea) textarea.focus();
   }
 },
 
@@ -1294,6 +1352,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
