@@ -1171,7 +1171,7 @@ showPrevCard() {
 confirmCardSelection() {
   const questionId = this.currentCardInputId;
   if (!questionId) {
-    this.closeCardModal();
+    document.getElementById('cardModal').classList.remove('active');
     return;
   }
 
@@ -1186,7 +1186,7 @@ confirmCardSelection() {
 
   this.saveResponses();
   this.renderModule();
-  this.closeCardModal();
+  document.getElementById('cardModal').classList.remove('active');
 
   // найти блок вопроса и прокрутить к нему
   const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
@@ -1199,6 +1199,7 @@ confirmCardSelection() {
     if (textarea) textarea.focus();
   }
 },
+
 
 
             // ============= REPORTS =============
@@ -1347,6 +1348,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
