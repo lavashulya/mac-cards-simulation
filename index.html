@@ -619,6 +619,12 @@
                 box-shadow: none;
                 padding: 0;
             }
+			.highlight-question {
+  box-shadow: 0 0 0 3px rgba(255, 197, 120, 0.8);
+  border-radius: 12px;
+  background: #fffaf1;
+}
+
         }
     </style>
 </head>
@@ -1168,14 +1174,26 @@ confirmCardSelection() {
     return;
   }
 
-  // сохранить карту в ответах
-  if (!this.responses[questionId]) {
-    this.responses[questionId] = {};
-  }
-  this.responses[questionId].cards = [card.id];
-  this.saveState();
+// сохранить карту в ответах
+if (!this.responses[questionId]) {
+  this.responses[questionId] = {};
+}
+this.responses[questionId].cards = [card.id];
+this.saveState();
 
-  this.closeCardModal();
+this.closeCardModal();
+
+// найти блок вопроса и прокрутить к нему
+const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
+if (questionBlock) {
+  questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  questionBlock.classList.add('highlight-question');
+  setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
+
+  const textarea = questionBlock.querySelector('textarea');
+  if (textarea) textarea.focus();
+}
+
 
   // найти блок вопроса и прокрутить к нему
   const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
@@ -1369,6 +1387,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
