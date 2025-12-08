@@ -1142,6 +1142,7 @@ renderCardPreview() {
 
 selectCardInModal(index) {
   this.currentCardIndex = index;
+  this.currentSelectedCardId = this.cards[index].id; // запоминаем выбранную карту
   this.renderCardPreview();
 
   const gallery = document.getElementById('cardGallery');
@@ -1152,6 +1153,7 @@ selectCardInModal(index) {
     selectedEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
 },
+
 
 showNextCard() {
   if (!this.cards.length) return;
@@ -1345,6 +1347,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
