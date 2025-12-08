@@ -1168,32 +1168,23 @@ showPrevCard() {
 
 confirmCardSelection() {
   const questionId = this.currentCardInputId;
-  const card = this.cards[this.currentCardIndex];
-  if (!questionId || !card) {
+  if (!questionId) {
     this.closeCardModal();
     return;
   }
 
-// сохранить карту в ответах
-if (!this.responses[questionId]) {
-  this.responses[questionId] = {};
-}
-this.responses[questionId].cards = [card.id];
-this.saveState();
+  if (!this.responses[questionId]) {
+    this.responses[questionId] = { text: '', cards: [] };
+  }
 
-this.closeCardModal();
+  // сохраняем выбранную карту
+  this.responses[questionId].cards = this.currentSelectedCardId
+    ? [this.currentSelectedCardId]
+    : [];
 
-// найти блок вопроса и прокрутить к нему
-const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
-if (questionBlock) {
-  questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  questionBlock.classList.add('highlight-question');
-  setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
-
-  const textarea = questionBlock.querySelector('textarea');
-  if (textarea) textarea.focus();
-}
-
+  this.saveResponses();
+  this.renderModule();
+  this.closeCardModal();
 
   // найти блок вопроса и прокрутить к нему
   const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
@@ -1201,10 +1192,9 @@ if (questionBlock) {
     questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
     questionBlock.classList.add('highlight-question');
     setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
+
     const textarea = questionBlock.querySelector('textarea');
-    if (textarea) textarea.focus();
-  }
-},
+    if (textarea) textarea.focus
 
 
             // ============= REPORTS =============
@@ -1353,6 +1343,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
