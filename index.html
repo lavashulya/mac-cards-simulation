@@ -995,23 +995,25 @@ let cards = cards_OS;
                 `).join('');
 
                 // Восстановить выбор карт
-                module.exercises.forEach(ex => {
-                    ex.questions.forEach(q => {
-                        const selected = this.responses[q.id]?.cards || [];
-                        const container = document.getElementById(`selected-${q.id}`);
-                        if (container) {
-                            container.innerHTML = selected.map(cardId => {
-                                const card = this.cards.find(c => c.id === cardId);
-                                return `
-                                    <div class="report-card-preview" style="position: relative;">
-                                        <img src="${card.img}" alt="${card.name}">
-                                        <button type="button" class="btn-small" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;" onclick="app.removeCard('${q.id}', ${cardId})">✕</button>
-                                    </div>
-                                `;
-                            }).join('');
-                        }
-                    });
-                });
+             module.exercises.forEach(ex => {
+  ex.questions.forEach(q => {
+    const selected = this.responses[q.id]?.cards || [];
+    const container = document.getElementById(`selected-${q.id}`);
+    if (container) {
+      container.innerHTML = selected.map(cardId => {
+        const card = cards.find(c => c.id === cardId); // ← тут поменяли
+        if (!card) return '';
+        return `
+          <div class="report-card-preview" style="position: relative;">
+            <img src="${card.img}" alt="${card.name}">
+            <button type="button" class="btn-small" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;" onclick="app.removeCard('${q.id}', ${cardId})">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+  });
+});
+
 
                 this.updateProgress();
             },
@@ -1085,7 +1087,7 @@ let cards = cards_OS;
                 this.responses = saved ? JSON.parse(saved) : {};
             },
 
-            // ============= CARD MODAL =============
+
 // ============= CARD MODAL =============
 // индекс текущей карты в модалке
 currentCardIndex: 0,
@@ -1094,7 +1096,6 @@ openCardModal(questionId, startIndex = 0) {
   this.currentCardInputId = questionId;
   this.currentCardIndex = startIndex;
 
-  // если по этому вопросу уже есть сохранённая карта — открыть именно её
   const savedCardId = this.responses[questionId]?.cards?.[0] || null;
   if (savedCardId) {
     const idx = this.cards.findIndex(c => c.id === savedCardId);
@@ -1103,9 +1104,13 @@ openCardModal(questionId, startIndex = 0) {
     }
   }
 
+  // синхронизируем выбранную карту с текущим индексом
+  if (this.cards[this.currentCardIndex]) {
+    this.currentSelectedCardId = this.cards[this.currentCardIndex].id;
+  }
+
   this.renderCardGallery();
   this.renderCardPreview();
-
   document.getElementById('cardModal').classList.add('active');
 },
 
@@ -1182,11 +1187,16 @@ confirmCardSelection() {
     return;
   }
 
+  // если по какой‑то причине currentSelectedCardId ещё не установлен,
+  // берём карту из текущего индекса
+  if (!this.currentSelectedCardId && this.cards[this.currentCardIndex]) {
+    this.currentSelectedCardId = this.cards[this.currentCardIndex].id;
+  }
+
   if (!this.responses[questionId]) {
     this.responses[questionId] = { text: '', cards: [] };
   }
 
-  // сохраняем выбранную карту
   this.responses[questionId].cards = this.currentSelectedCardId
     ? [this.currentSelectedCardId]
     : [];
@@ -1355,6 +1365,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
