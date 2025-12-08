@@ -1056,46 +1056,63 @@ let cards = cards_OS;
             },
 
             // ============= CARD MODAL =============
-	openCardModal(questionId) {
-  		this.currentCardInputId = questionId;
+// ============= CARD MODAL =============
+openCardModal(questionId) {
+  this.currentCardInputId = questionId;
 
- 		 // Текущее сохранённое значение для вопроса
-  		const currentCardId = this.responses[questionId]?.cards?.[0] || null;
-  		this.currentSelectedCardId = currentCardId;
+  const currentCardId = this.responses[questionId]?.cards?.[0] || null;
+  this.currentSelectedCardId = currentCardId;
 
-  		const gallery = document.getElementById('cardGallery');
-  		gallery.innerHTML = this.cards.map(card => `
-    		<div class="card ${currentCardId === card.id ? 'selected' : ''}"
-        	 onclick="app.selectCardInModal(${card.id})">
-     		 <img src="${card.img}" alt="${card.name}"
-           onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
-      		<div class="card-label">${card.name}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('cardModal').classList.add('active');
-},
-
-
-selectCardInModal(cardId) {
-  this.currentSelectedCardId = cardId;
-
-  // Обновляем визуальное выделение
   const gallery = document.getElementById('cardGallery');
-  if (!gallery) return;
-  Array.from(gallery.getElementsByClassName('card')).forEach(cardEl => {
-    cardEl.classList.remove('selected');
-  });
-  // Находим карточку по data-id (если нужно) – проще перерисовать:
   gallery.innerHTML = this.cards.map(card => `
-    <div class="card ${this.currentSelectedCardId === card.id ? 'selected' : ''}"
-         onclick="app.selectCardInModal(${card.id})">
-      <img src="${card.img}" alt="${card.name}"
+    <div class="card" onclick="app.selectCardInModal(${card.id})">
+      <img src="${card.img}"
+           alt="${card.name}"
            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
       <div class="card-label">${card.name}</div>
     </div>
   `).join('');
+
+  if (currentCardId) {
+    this.selectCardInModal(currentCardId, false);
+  } else {
+    const preview = document.getElementById('cardPreview');
+    if (preview) preview.style.display = 'none';
+  }
+
+  document.getElementById('cardModal').classList.add('active');
 },
+
+selectCardInModal(cardId, scrollToCard = true) {
+  this.currentSelectedCardId = cardId;
+
+  const gallery = document.getElementById('cardGallery');
+  if (!gallery) return;
+
+  const cardEls = Array.from(gallery.getElementsByClassName('card'));
+  cardEls.forEach(el => el.classList.remove('selected'));
+
+  const selectedEl = cardEls[cardId - 1];
+  if (selectedEl) {
+    selectedEl.classList.add('selected');
+    if (scrollToCard) {
+      selectedEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }
+
+  const card = this.cards.find(c => c.id === cardId);
+  const preview = document.getElementById('cardPreview');
+  const previewImg = document.getElementById('cardPreviewImg');
+  const previewTitle = document.getElementById('cardPreviewTitle');
+
+  if (card && preview && previewImg && previewTitle) {
+    preview.style.display = 'block';
+    previewImg.src = card.img;
+    previewImg.alt = card.name;
+    previewTitle.textContent = card.name;
+  }
+},
+
 
 	confirmCardSelection() {
   		const questionId = this.currentCardInputId;
@@ -1277,6 +1294,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
