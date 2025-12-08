@@ -270,39 +270,39 @@
 
         /* ============= CARD GALLERY ============= */
 .cards-gallery {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* ровно 4 столбца */
-    gap: 12px;
-    margin-bottom: 20px;
-    max-height: 70vh;
-    overflow-y: auto;
-    overflow-x: hidden; /* запрещаем горизонтальный скролл */
-    padding: 10px;
-    background: var(--color-light-gray);
-    border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 карты в ряд */
+  gap: 16px;
+  margin-bottom: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  background: var(--color-light-gray);
+  border-radius: 10px;
 }
 
-        .card {
-             position: relative;
-    cursor: pointer;
-    transition: all var(--transition);
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+.card {
+  position: relative;
+  cursor: pointer;
+  transition: all var(--transition);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
         .card:hover {
             transform: translateY(-4px) scale(1.05);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
-        .card img {
-width: 100%;
-    height: 220px;      /* было 200 – делаем чуть выше */
-    object-fit: cover;
-    display: block;
-        }
+.card img {
+  width: 100%;
+  height: 230px;       /* можно 230–260, чтобы были крупнее */
+  object-fit: cover;
+  display: block;
+}
 
         .card-checkbox {
             position: absolute;
@@ -1257,6 +1257,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
