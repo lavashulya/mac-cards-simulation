@@ -1194,7 +1194,9 @@ confirmCardSelection() {
     setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
 
     const textarea = questionBlock.querySelector('textarea');
-    if (textarea) textarea.focus
+    if (textarea) textarea.focus();
+  }
+},
 
 
             // ============= REPORTS =============
@@ -1343,6 +1345,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
