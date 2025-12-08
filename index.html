@@ -1207,40 +1207,6 @@ if (questionBlock) {
 },
 
 
-	confirmCardSelection() {
-  		const questionId = this.currentCardInputId;
-  		if (!questionId) {
-    		this.closeCardModal();
-    		return;
-  		}
-
-  		if (!this.responses[questionId]) {
-    		this.responses[questionId] = { text: '', cards: [] };
-  		}
-
-  		// Сохраняем ровно один cardId (если выбран)
-  		this.responses[questionId].cards = this.currentSelectedCardId ? [this.currentSelectedCardId] : [];
-  		this.saveResponses();
-  		this.renderModule();
-  		this.closeCardModal();
-		},
-
-
-            removeCard(questionId, cardId) {
-                if (this.responses[questionId]) {
-                    this.responses[questionId].cards = this.responses[questionId].cards.filter(c => c !== cardId);
-                    this.saveResponses();
-                    this.renderModule();
-                }
-            },
-
-		closeCardModal() {
-  			this.currentCardInputId = null;
-  			this.currentSelectedCardId = null;
-  			document.getElementById('cardModal').classList.remove('active');
-		},
-
-
             // ============= REPORTS =============
 createReport(moduleId) {
   const module = MODULES.find(m => m.id === moduleId);
@@ -1387,6 +1353,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
