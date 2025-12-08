@@ -700,53 +700,60 @@
         </main>
     </div>
 
-    <!-- CARD SELECTOR MODAL -->
+<!-- CARD SELECTOR MODAL -->
 <div id="cardModal" class="modal">
   <div class="modal-content">
-    <span class="modal-close" onclick="app.closeCardModal()">✕</span>
+    <span class="modal-close"
+          onclick="document.getElementById('cardModal').classList.remove('active')">✕</span>
 
     <h2 style="margin-bottom: 15px;">Выберите карту</h2>
 
     <!-- Крупный просмотр выбранной карты -->
-<div id="cardPreview" style="margin-bottom: 20px; text-align: center; display:none; position: relative;">
-  <button type="button"
-          onclick="app.showPrevCard()"
-          style="position:absolute; left:5%; top:50%; transform:translateY(-50%);"
-          class="btn-secondary">
-    ←
-  </button>
+    <div id="cardPreview"
+         style="margin-bottom: 20px; text-align: center; display:none; position: relative;">
+      <button type="button"
+              onclick="app.showPrevCard()"
+              style="position:absolute; left:5%; top:50%; transform:translateY(-50%);"
+              class="btn-secondary">
+        ←
+      </button>
 
-  <img id="cardPreviewImg"
-       src=""
-       alt=""
-       style="max-width: 60%; max-height: 60vh; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); object-fit: cover;">
+      <img id="cardPreviewImg"
+           src=""
+           alt=""
+           style="max-width: 60%; max-height: 60vh; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); object-fit: cover;">
 
-  <button type="button"
-          onclick="app.showNextCard()"
-          style="position:absolute; right:5%; top:50%; transform:translateY(-50%);"
-          class="btn-secondary">
-    →
-  </button>
+      <button type="button"
+              onclick="app.showNextCard()"
+              style="position:absolute; right:5%; top:50%; transform:translateY(-50%);"
+              class="btn-secondary">
+        →
+      </button>
 
-  <div id="cardPreviewTitle" style="margin-top: 10px; font-weight: 600; color: var(--color-brown);"></div>
+      <div id="cardPreviewTitle"
+           style="margin-top: 10px; font-weight: 600; color: var(--color-brown);"></div>
 
-  <button type="button"
-          class="btn-primary"
-          style="margin-top: 15px;"
-          onclick="app.confirmCardSelection()">
-    Выбрать карту
-  </button>
-</div>
-
+      <button type="button"
+              class="btn-primary"
+              style="margin-top: 15px;"
+              onclick="app.confirmCardSelection()">
+        Выбрать карту
+      </button>
+    </div>
 
     <div id="cardGallery" class="cards-gallery"></div>
 
     <!-- нижняя кнопка можно оставить как дубль или убрать -->
     <div class="modal-footer">
-      <button type="button" class="btn-secondary" onclick="app.closeCardModal()">Закрыть</button>
+      <button type="button"
+              class="btn-secondary"
+              onclick="document.getElementById('cardModal').classList.remove('active')">
+        Закрыть
+      </button>
     </div>
   </div>
 </div>
+
 
 
 
@@ -1348,6 +1355,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
