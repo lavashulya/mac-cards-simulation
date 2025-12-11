@@ -718,15 +718,29 @@
     </div>
 
     <!-- Режим одной карты -->
-    <div id="cardDetailView" style="display:none; text-align:center;">
-      <h2 id="cardPreviewTitle" style="margin-bottom:16px; color:var(--color-brown);"></h2>
-      <div id="cardPreview" style="margin:0 auto 20px; max-width:400px;">
-        <img id="cardPreviewImg" src="" alt="" style="width:100%; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
-      </div>
-      <button type="button" class="btn-primary" onclick="app.confirmCardSelection()">Выбрать</button>
-    </div>
+<div id="cardDetailView" style="display:none; text-align:center;">
+  <h2 id="cardPreviewTitle" style="margin-bottom:16px; color:var(--color-brown);"></h2>
+  <div id="cardPreview" style="margin:0 auto 20px; max-width:400px;">
+    <img id="cardPreviewImg" src="" alt="" style="width:100%; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+  </div>
+
+  <!-- Кнопка выбрать -->
+  <button type="button" class="btn-primary" id="cardChooseButton" onclick="app.confirmCardSelection()">
+    Выбрать
+  </button>
+
+  <!-- Поле для инсайта и кнопка Готово (по умолчанию скрыты) -->
+  <div id="cardInsightBlock" style="margin-top:20px; display:none; max-width:480px; margin-left:auto; margin-right:auto; text-align:left;">
+    <label style="display:block; margin-bottom:8px; font-weight:500; color:var(--color-brown);">
+      Ваш инсайт по этой карте:
+    </label>
+    <textarea id="cardInsightTextarea" rows="4" style="width:100%; padding:10px 12px; border-radius:12px; border:1px solid #ddd; resize:vertical;"></textarea>
+    <button type="button" class="btn-secondary" style="margin-top:12px;" onclick="app.finishCardInsight()">
+      Готово
+    </button>
   </div>
 </div>
+
 
 
 
@@ -1141,28 +1155,58 @@ closeCardModal() {
 confirmCardSelection() {
   const questionId = this.currentCardInputId;
   if (!questionId || !this.currentSelectedCardId) {
+    return;
+  }
+
+  // создаём структуру ответа, если её ещё нет
+  if (!this.responses[questionId]) {
+    this.responses[questionId] = { text: '', cards: [] };
+  }
+
+  // сохраняем выбранную карту, но НЕ закрываем модалку
+  this.responses[questionId].cards = [this.currentSelectedCardId];
+
+  // показываем блок с инсайтом внутри модалки
+  const insightBlock = document.getElementById('cardInsightBlock');
+  const insightTextarea = document.getElementById('cardInsightTextarea');
+
+  if (insightBlock && insightTextarea) {
+    insightBlock.style.display = 'block';
+    // подтягиваем уже введённый текст, если он был
+    insightTextarea.value = this.responses[questionId].text || '';
+    insightTextarea.focus();
+  }
+},
+
+finishCardInsight() {
+  const questionId = this.currentCardInputId;
+  if (!questionId) {
     this.closeCardModal();
     return;
   }
+
+  const insightTextarea = document.getElementById('cardInsightTextarea');
+  const text = insightTextarea ? insightTextarea.value : '';
 
   if (!this.responses[questionId]) {
     this.responses[questionId] = { text: '', cards: [] };
   }
 
-  this.responses[questionId].cards = [this.currentSelectedCardId];
+  // сохраняем текст инсайта
+  this.responses[questionId].text = text;
   this.saveResponses();
   this.renderModule();
   this.closeCardModal();
 
+  // переносим фокус на поле инсайта в модуле
   const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
   if (questionBlock) {
     questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    questionBlock.classList.add('highlight-question');
-    setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
     const textarea = questionBlock.querySelector('textarea');
     if (textarea) textarea.focus();
   }
 },
+
 
 
             // ============= REPORTS =============
@@ -1311,6 +1355,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
