@@ -1196,6 +1196,28 @@ finishCardInsight() {
     this.responses[questionId] = { text: '', cards: [] };
   }
 
+  // строго для текущего вопроса
+  this.responses[questionId].text = text;
+  this.saveResponses();
+  this.renderModule();
+  this.closeCardModal();
+
+  const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
+  if (questionBlock) {
+    questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const textarea = questionBlock.querySelector('textarea');
+    if (textarea) textarea.focus();
+  }
+}
+
+
+  const insightTextarea = document.getElementById('cardInsightTextarea');
+  const text = insightTextarea ? insightTextarea.value : '';
+
+  if (!this.responses[questionId]) {
+    this.responses[questionId] = { text: '', cards: [] };
+  }
+
   // сохраняем текст инсайта
   this.responses[questionId].text = text;
   this.saveResponses();
@@ -1359,6 +1381,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
