@@ -968,27 +968,33 @@ renderModule() {
       `).join('')}
     </div>
   `).join('');
-}
 
-                // Восстановить выбор карт
-             module.exercises.forEach(ex => {
-  ex.questions.forEach(q => {
-    const selected = this.responses[q.id]?.cards || [];
-    const container = document.getElementById(`selected-${q.id}`);
-    if (container) {
-      container.innerHTML = selected.map(cardId => {
-        const card = cards.find(c => c.id === cardId); // ← тут поменяли
-        if (!card) return '';
-        return `
-          <div class="report-card-preview" style="position: relative;">
-            <img src="${card.img}" alt="${card.name}">
-            <button type="button" class="btn-small" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;" onclick="app.removeCard('${q.id}', ${cardId})">✕</button>
-          </div>
-        `;
-      }).join('');
-    }
+  // Восстановить выбор карт
+  this.restoreSelectedCards();
+},
+
+restoreSelectedCards() {
+  const module = MODULES.find(m => m.id === this.currentModuleId);
+  module.exercises.forEach(ex => {
+    ex.questions.forEach(q => {
+      const selected = this.responses[q.id]?.cards || [];
+      const container = document.getElementById(`selected-${q.id}`);
+      if (container) {
+        container.innerHTML = selected.map(cardId => {
+          const card = cards.find(c => c.id === cardId);
+          if (!card) return '';
+          return `
+            <div class="report-card-preview" style="position: relative;">
+              <img src="${card.img}" alt="${card.name}">
+              <button type="button" class="btn-small" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;" onclick="app.removeCard('${q.id}', ${cardId})">✕</button>
+            </div>
+          `;
+        }).join('');
+      }
+    });
   });
-});
+},
+
 
 
                 this.updateProgress();
@@ -1307,6 +1313,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
