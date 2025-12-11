@@ -701,58 +701,33 @@
     </div>
 
 <!-- CARD SELECTOR MODAL -->
-<div id="cardModal" class="modal">
+<div class="modal" id="cardModal">
   <div class="modal-content">
-    <span class="modal-close"
-          onclick="document.getElementById('cardModal').classList.remove('active')">✕</span>
-
-    <h2 style="margin-bottom: 15px;">Выберите карту</h2>
-
-    <!-- Крупный просмотр выбранной карты -->
-    <div id="cardPreview"
-         style="margin-bottom: 20px; text-align: center; display:none; position: relative;">
-      <button type="button"
-              onclick="app.showPrevCard()"
-              style="position:absolute; left:5%; top:50%; transform:translateY(-50%);"
-              class="btn-secondary">
-        ←
-      </button>
-
-      <img id="cardPreviewImg"
-           src=""
-           alt=""
-           style="max-width: 60%; max-height: 60vh; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); object-fit: cover;">
-
-      <button type="button"
-              onclick="app.showNextCard()"
-              style="position:absolute; right:5%; top:50%; transform:translateY(-50%);"
-              class="btn-secondary">
-        →
-      </button>
-
-      <div id="cardPreviewTitle"
-           style="margin-top: 10px; font-weight: 600; color: var(--color-brown);"></div>
-
-      <button type="button"
-              class="btn-primary"
-              style="margin-top: 15px;"
-              onclick="app.confirmCardSelection()">
-        Выбрать карту
+    <!-- Верхняя панель -->
+    <div style="position:absolute; top:16px; left:20px; display:flex; align-items:center; gap:8px;">
+      <button type="button" id="cardBackButton" class="btn-secondary btn-small" style="display:none; padding:6px 10px;">
+        ← Назад
       </button>
     </div>
+    <span class="modal-close" onclick="app.closeCardModal()">✕</span>
 
-    <div id="cardGallery" class="cards-gallery"></div>
+    <!-- Режим списка карт -->
+    <div id="cardListView">
+      <h2 style="margin-bottom:16px; color:var(--color-brown);">Выберите карту</h2>
+      <div id="cardGallery" class="cards-gallery"></div>
+    </div>
 
-    <!-- нижняя кнопка можно оставить как дубль или убрать -->
-    <div class="modal-footer">
-      <button type="button"
-              class="btn-secondary"
-              onclick="document.getElementById('cardModal').classList.remove('active')">
-        Закрыть
-      </button>
+    <!-- Режим одной карты -->
+    <div id="cardDetailView" style="display:none; text-align:center;">
+      <h2 id="cardPreviewTitle" style="margin-bottom:16px; color:var(--color-brown);"></h2>
+      <div id="cardPreview" style="margin:0 auto 20px; max-width:400px;">
+        <img id="cardPreviewImg" src="" alt="" style="width:100%; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+      </div>
+      <button type="button" class="btn-primary" onclick="app.confirmCardSelection()">Выбрать</button>
     </div>
   </div>
 </div>
+
 
 
 
@@ -972,18 +947,25 @@ let cards = cards_OS;
                         </div>
                         <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
                         ${ex.questions.map((q, qIdx) => `
-                            <div class="question-group">
-                                <label class="question-label">
-                                    <span class="question-number">${qIdx + 1}</span>
-                                    ${q.text}
-                                </label>
-                                ${q.cardRequired ? `
-                                    <div style="margin-bottom: 15px;">
-                                        <button type="button" class="btn-secondary" onclick="app.openCardModal('${q.id}')">
-                                            📂 Выбрать карту
-                                        </button>
-                                        <div id="selected-${q.id}" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
-                                    </div>
+                            <div class="question-group" data-question-id="${q.id}">
+  <label class="question-label">
+    <span class="question-number">${qIdx + 1}</span>
+    ${q.text}
+  </label>
+  ${q.cardRequired ? `
+    <div style="margin-bottom: 15px;">
+      <button type="button" class="btn-secondary" onclick="app.openCardModal('${q.id}')">
+        📂 Выбрать карту
+      </button>
+      <div id="selected-${q.id}" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+    </div>
+  ` : ''}
+  <div class="insights-group">
+    <label class="insights-label">Ваши инсайты:</label>
+    <textarea id="text-${q.id}" placeholder="Напишите ваши мысли, впечатления, размышления...">${this.responses[q.id]?.text || ''}</textarea>
+  </div>
+</div>
+
                                 ` : ''}
                                 <div class="insights-group">
                                     <label class="insights-label">Ваши инсайты:</label>
@@ -1089,29 +1071,29 @@ let cards = cards_OS;
 
 
 // ============= CARD MODAL =============
+
 // индекс текущей карты в модалке
 currentCardIndex: 0,
 
-openCardModal(questionId, startIndex = 0) {
+openCardModal(questionId) {
   this.currentCardInputId = questionId;
-  this.currentCardIndex = startIndex;
+  this.currentCardIndex = 0;
+  this.currentSelectedCardId = null;
 
-  const savedCardId = this.responses[questionId]?.cards?.[0] || null;
-  if (savedCardId) {
-    const idx = this.cards.findIndex(c => c.id === savedCardId);
-    if (idx !== -1) {
-      this.currentCardIndex = idx;
-    }
-  }
+  // показываем список карт, скрываем режим детали
+  const modal = document.getElementById('cardModal');
+  const listView = document.getElementById('cardListView');
+  const detailView = document.getElementById('cardDetailView');
+  const backBtn = document.getElementById('cardBackButton');
 
-  // синхронизируем выбранную карту с текущим индексом
-  if (this.cards[this.currentCardIndex]) {
-    this.currentSelectedCardId = this.cards[this.currentCardIndex].id;
+  if (listView && detailView && backBtn) {
+    listView.style.display = 'block';
+    detailView.style.display = 'none';
+    backBtn.style.display = 'none';
   }
 
   this.renderCardGallery();
-  this.renderCardPreview();
-  document.getElementById('cardModal').classList.add('active');
+  modal.classList.add('active');
 },
 
 renderCardGallery() {
@@ -1119,104 +1101,70 @@ renderCardGallery() {
   if (!gallery) return;
 
   gallery.innerHTML = this.cards.map((card, index) => `
-    <div class="card ${index === this.currentCardIndex ? 'selected' : ''}"
-         onclick="app.selectCardInModal(${index})">
-      <img src="${card.img}"
-           alt="${card.name}"
+    <div class="card" onclick="app.openCardDetail(${index})">
+      <img src="${card.img}" alt="${card.name}" 
            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22140%22 height=%22200%22/%3E%3Ctext x=%2270%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23999%22%3EОшибка загрузки%3C/text%3E%3C/svg%3E'">
       <div class="card-label">${card.name}</div>
     </div>
   `).join('');
 },
 
-renderCardPreview() {
-  const card = this.cards[this.currentCardIndex];
-  const preview = document.getElementById('cardPreview');
+openCardDetail(index) {
+  this.currentCardIndex = index;
+  const card = this.cards[index];
+  if (!card) return;
+
+  const listView = document.getElementById('cardListView');
+  const detailView = document.getElementById('cardDetailView');
+  const backBtn = document.getElementById('cardBackButton');
   const img = document.getElementById('cardPreviewImg');
   const title = document.getElementById('cardPreviewTitle');
 
-  if (!preview || !img || !title || !card) return;
+  if (!listView || !detailView || !backBtn || !img || !title) return;
 
-  preview.style.display = 'block';
+  listView.style.display = 'none';
+  detailView.style.display = 'block';
+  backBtn.style.display = 'inline-flex';
+
   img.src = card.img;
   img.alt = card.name;
   title.textContent = card.name;
 
-  // подсветка выбранной мини-карты
-  const gallery = document.getElementById('cardGallery');
-  if (gallery) {
-    const cardEls = Array.from(gallery.getElementsByClassName('card'));
-    cardEls.forEach((el, index) => {
-      el.classList.toggle('selected', index === this.currentCardIndex);
-    });
-  }
+  this.currentSelectedCardId = card.id;
 },
 
-selectCardInModal(index) {
-  this.currentCardIndex = index;
-  this.currentSelectedCardId = this.cards[index].id; // запоминаем выбранную карту
-  this.renderCardPreview();
-
-  const gallery = document.getElementById('cardGallery');
-  if (!gallery) return;
-  const cardEls = Array.from(gallery.getElementsByClassName('card'));
-  const selectedEl = cardEls[index];
-  if (selectedEl) {
-    selectedEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  }
-},
-
-
-showNextCard() {
-  if (!this.cards.length) return;
-  this.currentCardIndex = (this.currentCardIndex + 1) % this.cards.length;
-  this.renderCardPreview();
-},
-
-showPrevCard() {
-  if (!this.cards.length) return;
-  this.currentCardIndex =
-    (this.currentCardIndex - 1 + this.cards.length) % this.cards.length;
-  this.renderCardPreview();
+closeCardModal() {
+  const modal = document.getElementById('cardModal');
+  if (modal) modal.classList.remove('active');
+  this.currentCardInputId = null;
+  this.currentSelectedCardId = null;
 },
 
 confirmCardSelection() {
   const questionId = this.currentCardInputId;
-  if (!questionId) {
-    document.getElementById('cardModal').classList.remove('active');
+  if (!questionId || !this.currentSelectedCardId) {
+    this.closeCardModal();
     return;
-  }
-
-  // если по какой‑то причине currentSelectedCardId ещё не установлен,
-  // берём карту из текущего индекса
-  if (!this.currentSelectedCardId && this.cards[this.currentCardIndex]) {
-    this.currentSelectedCardId = this.cards[this.currentCardIndex].id;
   }
 
   if (!this.responses[questionId]) {
     this.responses[questionId] = { text: '', cards: [] };
   }
 
-  this.responses[questionId].cards = this.currentSelectedCardId
-    ? [this.currentSelectedCardId]
-    : [];
-
+  this.responses[questionId].cards = [this.currentSelectedCardId];
   this.saveResponses();
   this.renderModule();
-  document.getElementById('cardModal').classList.remove('active');
+  this.closeCardModal();
 
-  // найти блок вопроса и прокрутить к нему
   const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
   if (questionBlock) {
     questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
     questionBlock.classList.add('highlight-question');
     setTimeout(() => questionBlock.classList.remove('highlight-question'), 1500);
-
     const textarea = questionBlock.querySelector('textarea');
     if (textarea) textarea.focus();
   }
 },
-
 
 
             // ============= REPORTS =============
@@ -1365,6 +1313,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
