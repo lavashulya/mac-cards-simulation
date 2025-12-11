@@ -1208,30 +1208,9 @@ finishCardInsight() {
     const textarea = questionBlock.querySelector('textarea');
     if (textarea) textarea.focus();
   }
-}
+},   // ← и на этом метод заканчивается
 
 
-  const insightTextarea = document.getElementById('cardInsightTextarea');
-  const text = insightTextarea ? insightTextarea.value : '';
-
-  if (!this.responses[questionId]) {
-    this.responses[questionId] = { text: '', cards: [] };
-  }
-
-  // сохраняем текст инсайта
-  this.responses[questionId].text = text;
-  this.saveResponses();
-  this.renderModule();
-  this.closeCardModal();
-
-  // переносим фокус на поле инсайта в модуле
-  const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
-  if (questionBlock) {
-    questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const textarea = questionBlock.querySelector('textarea');
-    if (textarea) textarea.focus();
-  }
-},
 
 
 
@@ -1381,6 +1360,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
