@@ -1060,21 +1060,25 @@ restoreSelectedCards() {
             },
 
             // ============= RESPONSES =============
-            saveResponses() {
-                const module = MODULES.find(m => m.id === this.currentModuleId);
-                module.exercises.forEach(ex => {
-                    ex.questions.forEach(q => {
-                        const textArea = document.getElementById(`text-${q.id}`);
-                        if (textArea) {
-                            this.responses[q.id] = {
-                                text: textArea.value,
-                                cards: this.responses[q.id]?.cards || []
-                            };
-                        }
-                    });
-                });
-                localStorage.setItem('responses', JSON.stringify(this.responses));
-            },
+saveResponses() {
+  const module = MODULES.find(m => m.id === this.currentModuleId);
+  module.exercises.forEach(ex => {
+    ex.questions.forEach(q => {
+      const textArea = document.getElementById(`text-${q.id}`);
+      if (textArea) {
+        if (!this.responses[q.id]) {
+          this.responses[q.id] = { text: '', cards: [] };
+        }
+        // если пользователь что-то ввёл в основном поле — берём это,
+        // иначе оставляем текст, который уже был (например, из модалки)
+        const newText = textArea.value;
+        this.responses[q.id].text = newText !== '' ? newText : (this.responses[q.id].text || '');
+      }
+    });
+  });
+  localStorage.setItem('responses', JSON.stringify(this.responses));
+},
+
 
             loadResponses() {
                 const saved = localStorage.getItem('responses');
@@ -1355,6 +1359,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
