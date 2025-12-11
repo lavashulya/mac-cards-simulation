@@ -933,48 +933,42 @@ let cards = cards_OS;
                 this.renderModules();
             },
 
-            renderModule() {
-                const module = MODULES.find(m => m.id === this.currentModuleId);
-                document.getElementById('moduleTitle').textContent = module.title;
-                document.getElementById('moduleDescription').textContent = module.description;
+renderModule() {
+  const module = MODULES.find(m => m.id === this.currentModuleId);
+  document.getElementById('moduleTitle').textContent = module.title;
+  document.getElementById('moduleDescription').textContent = module.description;
 
-                const form = document.getElementById('moduleForm');
-                form.innerHTML = module.exercises.map((ex, exIdx) => `
-                    <div class="exercise">
-                        <div class="exercise-title">
-                            <span class="exercise-number">${exIdx + 1}</span>
-                            ${ex.title}
-                        </div>
-                        <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
-                        ${ex.questions.map((q, qIdx) => `
-                            <div class="question-group" data-question-id="${q.id}">
-  <label class="question-label">
-    <span class="question-number">${qIdx + 1}</span>
-    ${q.text}
-  </label>
-  ${q.cardRequired ? `
-    <div style="margin-bottom: 15px;">
-      <button type="button" class="btn-secondary" onclick="app.openCardModal('${q.id}')">
-        📂 Выбрать карту
-      </button>
-      <div id="selected-${q.id}" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+  const form = document.getElementById('moduleForm');
+  form.innerHTML = module.exercises.map((ex, exIdx) => `
+    <div class="exercise">
+      <div class="exercise-title">
+        <span class="exercise-number">${exIdx + 1}</span>
+        ${ex.title}
+      </div>
+      <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
+      ${ex.questions.map((q, qIdx) => `
+        <div class="question-group" data-question-id="${q.id}">
+          <label class="question-label">
+            <span class="question-number">${qIdx + 1}</span>
+            ${q.text}
+          </label>
+          ${q.cardRequired ? `
+            <div style="margin-bottom: 15px;">
+              <button type='button' class='btn-secondary' onclick='app.openCardModal("${q.id}")'>
+                📂 Выбрать карту
+              </button>
+              <div id="selected-${q.id}" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+            </div>
+          ` : ''}
+          <div class="insights-group">
+            <label class="insights-label">Ваши инсайты:</label>
+            <textarea id="text-${q.id}" placeholder="Напишите ваши мысли, впечатления, размышления...">${this.responses[q.id]?.text || ''}</textarea>
+          </div>
+        </div>
+      `).join('')}
     </div>
-  ` : ''}
-  <div class="insights-group">
-    <label class="insights-label">Ваши инсайты:</label>
-    <textarea id="text-${q.id}" placeholder="Напишите ваши мысли, впечатления, размышления...">${this.responses[q.id]?.text || ''}</textarea>
-  </div>
-</div>
-
-                                ` : ''}
-                                <div class="insights-group">
-                                    <label class="insights-label">Ваши инсайты:</label>
-                                    <textarea id="text-${q.id}" placeholder="Напишите ваши мысли, впечатления, размышления...">${this.responses[q.id]?.text || ''}</textarea>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `).join('');
+  `).join('');
+}
 
                 // Восстановить выбор карт
              module.exercises.forEach(ex => {
@@ -1313,6 +1307,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
