@@ -677,7 +677,7 @@
             <!-- MODULE VIEW -->
 
             <!-- QUESTION VIEW: один вопрос на экран -->
-            <div class="view question-view" id="questionView" style="display:none;">
+            <div class="view question-view" id="questionView">
                 <div class="module-header">
                     <div class="breadcrumbs" id="questionBreadcrumbs"></div>
                     <h1 class="module-title" id="questionTitle"></h1>
@@ -928,10 +928,10 @@ renderModule() {
       </div>
       <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
   ${ex.questions.map((q, qIdx) => `
-        <div class="question-group"
-             data-question-id="${q.id}"
-             onclick="app.openQuestionView(${exIdx}, ${qIdx})"
-             style="cursor:pointer;">
+       <div class="question-group"
+     data-question-id="${q.id}"
+     onclick="app.openQuestionView(${exIdx}, ${qIdx})"
+     style="cursor:pointer;">
           <label class="question-label">
             <span class="question-number">${qIdx + 1}</span>
             ${q.text}
@@ -986,6 +986,8 @@ restoreSelectedCards() {
 
 // ===== ЭКРАН ОТДЕЛЬНОГО ВОПРОСА =====
 openQuestionView(exerciseIndex, questionIndex) {
+    console.log('openQuestionView', exerciseIndex, questionIndex);
+
     const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
     if (!module || !module.exercises[exerciseIndex]) return;
 
@@ -1023,42 +1025,9 @@ openQuestionView(exerciseIndex, questionIndex) {
     this.currentExerciseId = exerciseIndex;
     this.currentQuestionIndex = questionIndex;
 
-    // показать questionView, скрыть moduleView
+    // показать экран вопроса
     this.showView('questionView');
 },
-
-exitQuestionView() {
-    this.showView('moduleView');
-},
-
-nextQuestionInLesson() {
-    const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
-    if (!module || !module.exercises[this.currentExerciseId]) {
-        this.showView('moduleView');
-        return;
-    }
-
-    const exercise = module.exercises[this.currentExerciseId];
-    const question = exercise.questions[this.currentQuestionIndex];
-    if (!question) {
-        this.showView('moduleView');
-        return;
-    }
-
-    const insightEl = document.getElementById('questionInsight');
-    const text = insightEl ? insightEl.value : '';
-
-    this.responses[question.id] = {
-        ...(this.responses[question.id] || {}),
-        text
-    };
-    this.saveResponses?.();
-    this.updateProgress?.();
-
-    // пока упрощённо: возвращаемся к модулю
-    this.showView('moduleView');
-},
-
 
 
             updateProgress() {
@@ -1409,6 +1378,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
