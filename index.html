@@ -846,6 +846,14 @@ let cards = cards_OS;
 
 
         // ============= APP STATE =============
+
+// Адаптация структуры MODULES: lessons -> exercises для старого кода
+const ADAPTED_MODULES = MODULES.map(m => ({
+    ...m,
+    exercises: m.lessons || []
+}));
+
+		
         const app = {
             currentModuleId: null,
             currentExerciseId: null,
@@ -864,25 +872,27 @@ let cards = cards_OS;
             },
 
             // ============= MODULES =============
-            renderModules() {
-                const grid = document.getElementById('modulesGrid');
-                grid.innerHTML = MODULES.map((m, i) => `
-                    <div class="module-item ${i > 0 && !this.isModuleUnlocked(i) ? 'locked' : ''} ${this.currentModuleId === m.id ? 'active' : ''}"
-                         onclick="app.startModule(${i})">
-                        <span>Модуль ${m.id}</span>
-                        <span class="module-icon">${i > 0 && !this.isModuleUnlocked(i) ? '🔒' : '✓'}</span>
-                    </div>
-                `).join('');
-            },
+renderModules() {
+    const grid = document.getElementById('modulesGrid');
+    grid.innerHTML = ADAPTED_MODULES.map((m, i) => `
+        <div class="module-item ${i > 0 && !this.isModuleUnlocked(i) ? 'locked' : ''} ${this.currentModuleId === m.id ? 'active' : ''}"
+             onclick="app.startModule(${i})">
+            <span>Модуль ${m.id}</span>
+            <span class="module-icon">${i > 0 && !this.isModuleUnlocked(i) ? '🔒' : '✓'}</span>
+        </div>
+    `).join('');
+},
 
-            isModuleUnlocked(index) {
-                if (index === 0) return true;
-                const prevModule = MODULES[index - 1];
-                return this.isModuleCompleted(prevModule.id);
-            },
+
+ isModuleUnlocked(index) {
+    if (index === 0) return true;
+    const prevModule = ADAPTED_MODULES[index - 1];
+    return this.isModuleCompleted(prevModule.id);
+},
+
 
             isModuleCompleted(moduleId) {
-                const module = MODULES.find(m => m.id === moduleId);
+                const module = ADAPTED_MODULES.find(m => m.id === moduleId);
                 if (!module) return false;
                 
                 return module.exercises.every(ex => 
@@ -891,7 +901,7 @@ let cards = cards_OS;
             },
 
             startModule(moduleIndex) {
-                const module = MODULES[moduleIndex];
+               const module = ADAPTED_MODULES[moduleIndex];
                 if (moduleIndex > 0 && !this.isModuleUnlocked(moduleIndex)) {
                     alert('Сначала завершите предыдущий модуль');
                     return;
@@ -905,7 +915,7 @@ let cards = cards_OS;
             },
 
 renderModule() {
-  const module = MODULES.find(m => m.id === this.currentModuleId);
+  const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
   document.getElementById('moduleTitle').textContent = module.title;
   document.getElementById('moduleDescription').textContent = module.description;
 
@@ -970,7 +980,7 @@ restoreSelectedCards() {
 
 
             updateProgress() {
-                const module = MODULES.find(m => m.id === this.currentModuleId);
+                const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
                 const totalQuestions = module.exercises.reduce((sum, ex) => sum + ex.questions.length, 0);
                 const answeredQuestions = module.exercises.reduce((sum, ex) => {
                     return sum + ex.questions.filter(q => this.responses[q.id]).length;
@@ -983,7 +993,7 @@ restoreSelectedCards() {
 
             nextModule() {
                 this.saveResponses();
-                const module = MODULES.find(m => m.id === this.currentModuleId);
+    const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
                 
                 const allAnswered = module.exercises.every(ex => 
                     ex.questions.every(q => {
@@ -999,7 +1009,7 @@ restoreSelectedCards() {
 
                 this.createReport(this.currentModuleId);
 
-                const currentIndex = MODULES.findIndex(m => m.id === this.currentModuleId);
+                const currentIndex = ADAPTED_MODULES.findIndex(m => m.id === this.currentModuleId);
                 if (currentIndex < MODULES.length - 1) {
                     this.startModule(currentIndex + 1);
                 } else {
@@ -1009,8 +1019,8 @@ restoreSelectedCards() {
             },
 
             previousModule() {
-                this.saveResponses();
-                const currentIndex = MODULES.findIndex(m => m.id === this.currentModuleId);
+                 this.saveResponses();
+    const currentIndex = ADAPTED_MODULES.findIndex(m => m.id === this.currentModuleId);
                 if (currentIndex > 0) {
                     this.startModule(currentIndex - 1);
                 }
@@ -1317,6 +1327,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
