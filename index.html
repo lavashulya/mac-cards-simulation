@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Осознанные сновидения - MAC Карты</title>
+    <title>Самореализация</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
@@ -627,6 +627,8 @@
 
         }
     </style>
+	   <script src="modules.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <header>
@@ -641,6 +643,11 @@
     	<button class="btn-secondary btn-small" onclick="app.goHome()">← Домой</button>
   		</div>
     </header>
+
+	<!-- НОВЫЙ БЛОК ДЛЯ МОДУЛЕЙ -->
+<div id="modulesScreen">
+  <!-- сюда JS потом подставит модули -->
+</div>
 
     <div class="container">
         <!-- SIDEBAR -->
@@ -1360,6 +1367,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
