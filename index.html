@@ -955,8 +955,11 @@ renderModule() {
 },
 
 restoreSelectedCards() {
-  const module = MODULES.find(m => m.id === this.currentModuleId);
+  const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
+  if (!module || !Array.isArray(module.exercises)) return;
+
   module.exercises.forEach(ex => {
+    if (!ex.questions) return;
     ex.questions.forEach(q => {
       const selected = this.responses[q.id]?.cards || [];
       const container = document.getElementById(`selected-${q.id}`);
@@ -975,6 +978,7 @@ restoreSelectedCards() {
     });
   });
 },
+
 
 
 
@@ -1327,6 +1331,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
