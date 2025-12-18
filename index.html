@@ -628,7 +628,7 @@
         }
     </style>
 	   <script src="modules.js"></script>
-    <script src="script.js"></script>
+  
 </head>
 <body>
     <header>
@@ -843,94 +843,7 @@
 
 let cards = cards_OS;
 		
-        // ============= ДАННЫЕ МОДУЛЕЙ =============
-        const MODULES = [
-            {
-                id: 1,
-                title: "Кто я?",
-                description: "Исследуем восприятие себя с разных углов",
-                exercises: [
-                    {
-                        title: "Восприятие себя",
-                        description: "Выберите карту на каждый вопрос, отражающую ваше видение",
-                        questions: [
-		{ id: "q1", text: "Как я себя вижу?", cardRequired: true },
-                { id: "q2", text: "Как я хочу себя видеть?", cardRequired: true },
-                { id: "q3", text: "Какова я на самом деле?", cardRequired: true },
-                { id: "q4", text: "Как меня видят другие?", cardRequired: true },
-                { id: "q5", text: "Каким(ой) они хотят меня видеть?", cardRequired: true },
-                { id: "q6", text: "Каким(ой) я могу и хочу быть настоящим(ей)?", cardRequired: true }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 2,
-                title: "Определение успеха",
-                description: "Разберёмся, что такое успех для вас",
-                exercises: [
-                    {
-                        title: "Анализ успеха",
-                        description: "Определите успех через примеры",
-                        questions: [
-                            { id: "q7", text: "Выберите 5 успешных людей и ответьте: Какого успеха они достигли?" },
-                            { id: "q8", text: "Что в них общего?" },
-                            { id: "q9", text: "В чём между ними разница?" },
-                            { id: "q10", text: "Дайте своё определение успеха. Хотели ли вы достичь именно такого?" }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 3,
-                title: "Собственный успех",
-                description: "Спланируем ваши личные цели",
-                exercises: [
-                    {
-                        title: "Планирование",
-                        description: "Определите уровни ваших целей",
-                        questions: [
-                            { id: "q11", text: "Что должно происходить через 5 лет, чтобы я считал(а) себя успешным(ой)?", cardRequired: true },
-                            { id: "q12", text: "Что должно происходить через год?", cardRequired: true },
-                            { id: "q13", text: "Какого успеха в течение месяца?", cardRequired: true },
-                            { id: "q14", text: "Какой успешный шаг нужно осуществить на неделе?", cardRequired: true }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 4,
-                title: "Мотивация",
-                description: "Найдём ваши движущие силы",
-                exercises: [
-                    {
-                        title: "Мотивационный анализ",
-                        description: "Исследуем, что вас вдохновляет",
-                        questions: [
-                            { id: "q15", text: "Что вас вдохновляет?", cardRequired: true },
-                            { id: "q16", text: "Что вас парализует?", cardRequired: true },
-                            { id: "q17", text: "Что нужно изменить?" }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 5,
-                title: "Трансформация",
-                description: "Видение вашего будущего",
-                exercises: [
-                    {
-                        title: "Видение будущего",
-                        description: "Создайте образ идеального себя",
-                        questions: [
-                            { id: "q18", text: "Кем я хочу стать?", cardRequired: true },
-                            { id: "q19", text: "Какие качества мне развивать?", cardRequired: true },
-                            { id: "q20", text: "Первый шаг прямо сейчас?" }
-                        ]
-                    }
-                ]
-            }
-        ];
+
 
         // ============= APP STATE =============
         const app = {
@@ -1404,6 +1317,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
