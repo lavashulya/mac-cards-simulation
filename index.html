@@ -675,6 +675,43 @@
             </div>
 
             <!-- MODULE VIEW -->
+
+            <!-- QUESTION VIEW: один вопрос на экран -->
+            <div class="view question-view" id="questionView" style="display:none;">
+                <div class="module-header">
+                    <div class="breadcrumbs" id="questionBreadcrumbs"></div>
+                    <h1 class="module-title" id="questionTitle"></h1>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="questionProgressFill"></div>
+                    </div>
+                    <div class="progress-text" id="questionProgressText"></div>
+                </div>
+
+                <div class="question-layout">
+                    <div class="question-card-block">
+                        <h3 id="questionText"></h3>
+                        <div id="questionCardArea">
+                            <!-- сюда позже добавим выбор карты -->
+                        </div>
+                    </div>
+
+                    <div class="question-insight-block">
+                        <label class="insights-label">Ваш инсайт</label>
+                        <textarea id="questionInsight"
+                                  placeholder="Напишите ваши мысли, ощущения, инсайты..."></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" onclick="app.exitQuestionView()">← К модулю</button>
+                    <button type="button" class="btn-primary" onclick="app.nextQuestionInLesson()">Сохранить и далее →</button>
+                </div>
+            </div>
+
+			
             <div class="view module-view" id="moduleView">
                 <div class="module-header">
                     <h1 class="module-title" id="moduleTitle"></h1>
@@ -1367,6 +1404,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
