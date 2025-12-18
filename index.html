@@ -927,12 +927,16 @@ renderModule() {
         ${ex.title}
       </div>
       <p style="margin-bottom: 20px; color: #666; font-size: 14px;">${ex.description}</p>
-      ${ex.questions.map((q, qIdx) => `
-        <div class="question-group" data-question-id="${q.id}">
+  ${ex.questions.map((q, qIdx) => `
+        <div class="question-group"
+             data-question-id="${q.id}"
+             onclick="app.openQuestionView(${exIdx}, ${qIdx})"
+             style="cursor:pointer;">
           <label class="question-label">
             <span class="question-number">${qIdx + 1}</span>
             ${q.text}
           </label>
+
           ${q.cardRequired ? `
             <div style="margin-bottom: 15px;">
               <button type='button' class='btn-secondary' onclick='app.openCardModal("${q.id}")'>
@@ -980,6 +984,80 @@ restoreSelectedCards() {
 },
 
 
+// ===== ЭКРАН ОТДЕЛЬНОГО ВОПРОСА =====
+openQuestionView(exerciseIndex, questionIndex) {
+    const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
+    if (!module || !module.exercises[exerciseIndex]) return;
+
+    const exercise = module.exercises[exerciseIndex];
+    const question = exercise.questions[questionIndex];
+    if (!question) return;
+
+    // хлебные крошки
+    const bc = document.getElementById('questionBreadcrumbs');
+    if (bc) {
+        bc.textContent = `${module.title} → ${exercise.title} → Вопрос ${questionIndex + 1}`;
+    }
+
+    // заголовок и текст
+    const titleEl = document.getElementById('questionTitle');
+    const textEl = document.getElementById('questionText');
+    if (titleEl) titleEl.textContent = exercise.title;
+    if (textEl) textEl.textContent = question.text;
+
+    // прогресс внутри упражнения
+    const total = exercise.questions.length || 1;
+    const current = questionIndex + 1;
+    const percent = Math.round(current / total * 100);
+    const pf = document.getElementById('questionProgressFill');
+    const pt = document.getElementById('questionProgressText');
+    if (pf) pf.style.width = percent + '%';
+    if (pt) pt.textContent = `${current} / ${total} вопросов (${percent}%)`;
+
+    // инсайт из сохранённых ответов
+    const resp = this.responses[question.id];
+    const insightEl = document.getElementById('questionInsight');
+    if (insightEl) insightEl.value = resp?.text || '';
+
+    // запомним позицию
+    this.currentExerciseId = exerciseIndex;
+    this.currentQuestionIndex = questionIndex;
+
+    // показать questionView, скрыть moduleView
+    this.showView('questionView');
+},
+
+exitQuestionView() {
+    this.showView('moduleView');
+},
+
+nextQuestionInLesson() {
+    const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
+    if (!module || !module.exercises[this.currentExerciseId]) {
+        this.showView('moduleView');
+        return;
+    }
+
+    const exercise = module.exercises[this.currentExerciseId];
+    const question = exercise.questions[this.currentQuestionIndex];
+    if (!question) {
+        this.showView('moduleView');
+        return;
+    }
+
+    const insightEl = document.getElementById('questionInsight');
+    const text = insightEl ? insightEl.value : '';
+
+    this.responses[question.id] = {
+        ...(this.responses[question.id] || {}),
+        text
+    };
+    this.saveResponses?.();
+    this.updateProgress?.();
+
+    // пока упрощённо: возвращаемся к модулю
+    this.showView('moduleView');
+},
 
 
 
@@ -1331,6 +1409,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
