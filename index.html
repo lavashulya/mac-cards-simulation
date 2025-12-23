@@ -900,19 +900,30 @@ renderModules() {
                 );
             },
 
-            startModule(moduleIndex) {
-               const module = ADAPTED_MODULES[moduleIndex];
-                if (moduleIndex > 0 && !this.isModuleUnlocked(moduleIndex)) {
-                    alert('Сначала завершите предыдущий модуль');
-                    return;
-                }
+startModule(moduleIndex) {
+    const module = ADAPTED_MODULES[moduleIndex];
+    if (!module) return;
 
-                this.currentModuleId = module.id;
-                this.currentExerciseId = 0;
-                this.renderModule();
-                this.showView('moduleView');
-                this.renderModules();
-            },
+    // проверка на блокировку модулей оставляем
+    if (moduleIndex > 0 && !this.isModuleUnlocked(moduleIndex)) {
+        alert('Сначала завершите предыдущий модуль');
+        return;
+    }
+
+    // запоминаем текущий модуль
+    this.currentModuleId = module.id;
+
+    // начинаем с первого упражнения и первого вопроса
+    this.currentExerciseId = 0;
+    this.currentQuestionIndex = 0;
+
+    // сразу открываем первый вопрос
+    this.openQuestionView(0, 0);
+
+    // при желании можно обновить левое меню
+    this.renderModules();
+},
+
 
 renderModule() {
   const module = ADAPTED_MODULES.find(m => m.id === this.currentModuleId);
@@ -1378,6 +1389,7 @@ showReport(reportId) {
     </script>
 </body>
 </html>
+
 
 
 
